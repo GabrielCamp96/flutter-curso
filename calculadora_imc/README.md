@@ -1,6 +1,6 @@
-# primeiro_projeto
+# calculadora_imc
 
-A new Flutter project.
+A new Flutter application.
 
 ## Getting Started
 

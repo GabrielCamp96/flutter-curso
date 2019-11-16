@@ -1,4 +1,4 @@
-package com.example.primeiro_projeto
+package com.github.gabrielcamp96.calculadora_imc
 
 import android.os.Bundle
 
