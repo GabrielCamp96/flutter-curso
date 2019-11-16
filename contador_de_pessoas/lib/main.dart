@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 
 void main() {
-  runApp(MaterialApp(
-      title: "Contador de pessoas",
-      home: Home()));
+  runApp(MaterialApp(title: "Contador de pessoas", home: Home()));
 }
 
 class Home extends StatefulWidget {
@@ -13,6 +10,17 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  int _people = 0;
+  String _info = "Pode entrar!";
+
+  void _changePeople(int delta) {
+    setState(() {
+      _people += delta;
+
+      _info = _people < 0 ? "Mundo invertido?!" : "Pode entrar!";
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -30,9 +38,9 @@ class _HomeState extends State<Home> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              "Pessoas: 0",
+              "Pessoas: $_people",
               style:
-              TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold,),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -44,7 +52,9 @@ class _HomeState extends State<Home> {
                       "+1",
                       style: TextStyle(color: Colors.white, fontSize: 40),
                     ),
-                    onPressed: () {debugPrint("+1");},
+                    onPressed: () {
+                      _changePeople(1);
+                    },
                   ),
                 ),
                 Padding(
@@ -54,13 +64,15 @@ class _HomeState extends State<Home> {
                       "-1",
                       style: TextStyle(color: Colors.white, fontSize: 40),
                     ),
-                    onPressed: () {debugPrint("-1");},
+                    onPressed: () {
+                      _changePeople(-1);
+                    },
                   ),
                 ),
               ],
             ),
             Text(
-              "Pode entrar",
+              _info,
               style: TextStyle(
                   color: Colors.white,
                   fontStyle: FontStyle.italic,
