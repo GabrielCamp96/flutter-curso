@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/painting.dart';
 
 void main() => runApp(MaterialApp(
       title: "Calculadora IMC",
@@ -25,26 +25,31 @@ class _HomeState extends State<Home> {
   TextEditingController _imcAltura = TextEditingController();
   TextEditingController _imcPeso = TextEditingController();
 
+  GlobalKey<FormState> _globalKey = GlobalKey<FormState>();
+
   void _limpaCampos() {
     setState(() {
       _imcAltura.text = "";
       _imcPeso.text = "";
       _resultado = 0;
       _mensagem = "Informe seus dados!";
+      _globalKey = GlobalKey<FormState>();
     });
   }
 
   void calcularImc(double peso, double altura) {
     setState(() {
       _resultado = double.parse((peso / pow(altura, 2)).toStringAsFixed(1));
-      if (_resultado < 18.5) _mensagem = "IMC $_resultado: Magreza";
-      if (_resultado > 18.5 && _resultado < 25)
+      if (_resultado < 18.5)
+        _mensagem = "IMC $_resultado: Magreza";
+      else if (_resultado > 18.5 && _resultado < 25)
         _mensagem = "IMC $_resultado: Normal";
-      if (_resultado >= 25 && _resultado < 30)
+      else if (_resultado >= 25 && _resultado < 30)
         _mensagem = "IMC $_resultado: Sobrepeso";
-      if (_resultado > 30 && _resultado < 40)
+      else if (_resultado > 30 && _resultado < 40)
         _mensagem = "IMC $_resultado: Obesidade";
-      if (_resultado >= 40) _mensagem = "IMC $_resultado: Obesidade grave";
+      else
+        _mensagem = "IMC $_resultado: Obesidade grave";
     });
   }
 
@@ -65,66 +70,88 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
-      body: Column(
-        children: <Widget>[
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(10.0),
-              child: Icon(
-                Icons.person_outline,
-                color: Colors.green[300],
-                size: 120,
-              ),
-            ),
-          ]),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
-            child: TextFormField(
-              controller: _imcPeso,
-              decoration: InputDecoration.collapsed(
-                  hintText: 'Peso (kg)',
-                  hintStyle: TextStyle(color: Colors.green[300])),
-              style: TextStyle(color: Colors.green[300]),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
-            child: TextFormField(
-              controller: _imcAltura,
-              decoration: InputDecoration.collapsed(
-                  hintText: 'Altura (m)',
-                  hintStyle: TextStyle(color: Colors.green[300])),
-              style: TextStyle(color: Colors.green[300]),
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+      body: SingleChildScrollView(
+        child: Form(
+          key: _globalKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Icon(
+                  Icons.person_outline,
+                  color: Colors.green,
+                  size: 120,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                child: TextFormField(
+                  controller: _imcPeso,
+                  keyboardType: TextInputType.numberWithOptions(),
+                  decoration: InputDecoration(
+                    labelText: "Peso (kg)",
+                    labelStyle: TextStyle(color: Colors.green),
+                  ),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.green, fontSize: 25),
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return "Insira seu peso!";
+                    }
+                  },
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                child: TextFormField(
+                  controller: _imcAltura,
+                  keyboardType: TextInputType.numberWithOptions(),
+                  decoration: InputDecoration(
+                    labelText: "Altura (m)",
+                    labelStyle: TextStyle(color: Colors.green),
+                  ),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.green, fontSize: 25),
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return "Insira sua altura!";
+                    }
+                  },
+                ),
+              ),
+              Padding(
                   padding: EdgeInsets.all(10.0),
-                  child: SizedBox(
-                    width: 390.0,
+                  child: Container(
+                    height: 50.0,
                     child: RaisedButton(
-                      child: Text("Calcular"),
-                      color: Colors.green[300],
+                      child: Text(
+                        "Calcular",
+                        style: TextStyle(fontSize: 25),
+                      ),
+                      color: Colors.green,
                       onPressed: () {
-                        _peso = double.parse(_imcPeso.text);
-                        _altura = double.parse(_imcAltura.text);
-                        calcularImc(_peso, _altura);
+                        if(_globalKey.currentState.validate()) {
+                          _peso = double.parse(_imcPeso.text);
+                          _altura = double.parse(_imcAltura.text);
+                          calcularImc(_peso, _altura);
+                        }
                       },
-                      splashColor: Colors.green[300],
                       textColor: Colors.white,
                     ),
                   )),
+              Text(
+                "${_resultado == 0 ? "Informe seus dados!" : "$_mensagem"}",
+                style: TextStyle(
+                  color: Colors.green,
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
             ],
           ),
-          Text(
-            "${_resultado == 0 ? "Informe seus dados!" : "$_mensagem"}",
-            style: TextStyle(
-              color: Colors.green[300],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
