@@ -25,17 +25,27 @@ class _HomeState extends State<Home> {
   TextEditingController _imcAltura = TextEditingController();
   TextEditingController _imcPeso = TextEditingController();
 
+  void _limpaCampos() {
+    setState(() {
+      _imcAltura.text = "";
+      _imcPeso.text = "";
+      _resultado = 0;
+      _mensagem = "Informe seus dados!";
+    });
+  }
+
   void calcularImc(double peso, double altura) {
-    _resultado = double.parse((peso / pow(altura, 2)).toStringAsFixed(1));
-    debugPrint("$_resultado");
-    if (_resultado < 18.5) _mensagem = "IMC $_resultado: Magreza";
-    if (_resultado > 18.5 && _resultado < 25)
-      _mensagem = "IMC $_resultado: Normal";
-    if (_resultado >= 25 && _resultado < 30)
-      _mensagem = "IMC $_resultado: Sobrepeso";
-    if (_resultado > 30 && _resultado < 40)
-      _mensagem = "IMC $_resultado: Obesidade";
-    if (_resultado >= 40) _mensagem = "IMC $_resultado: Obesidade grave";
+    setState(() {
+      _resultado = double.parse((peso / pow(altura, 2)).toStringAsFixed(1));
+      if (_resultado < 18.5) _mensagem = "IMC $_resultado: Magreza";
+      if (_resultado > 18.5 && _resultado < 25)
+        _mensagem = "IMC $_resultado: Normal";
+      if (_resultado >= 25 && _resultado < 30)
+        _mensagem = "IMC $_resultado: Sobrepeso";
+      if (_resultado > 30 && _resultado < 40)
+        _mensagem = "IMC $_resultado: Obesidade";
+      if (_resultado >= 40) _mensagem = "IMC $_resultado: Obesidade grave";
+    });
   }
 
   @override
@@ -49,6 +59,9 @@ class _HomeState extends State<Home> {
             icon: Icon(
               Icons.replay,
             ),
+            onPressed: () {
+              _limpaCampos();
+            },
           ),
         ],
       ),
@@ -78,7 +91,6 @@ class _HomeState extends State<Home> {
             padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
             child: TextFormField(
               controller: _imcAltura,
-
               decoration: InputDecoration.collapsed(
                   hintText: 'Altura (m)',
                   hintStyle: TextStyle(color: Colors.green[300])),
@@ -107,7 +119,7 @@ class _HomeState extends State<Home> {
             ],
           ),
           Text(
-            "${_resultado == 0 ? "Informe seus dados" : "$_mensagem"}",
+            "${_resultado == 0 ? "Informe seus dados!" : "$_mensagem"}",
             style: TextStyle(
               color: Colors.green[300],
             ),
